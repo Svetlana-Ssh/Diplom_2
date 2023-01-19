@@ -8,12 +8,13 @@ import static org.hamcrest.Matchers.equalTo;
 
 public class TestUserCreation {
     private User user;
+    private final UserGenerator userGenerator = new UserGenerator();
     private String userAccessToken;
     private final UserClient userClient = new UserClient();
 
     @Before
     public void setUp() {
-        user = new User("ssh-test@yandex.ru", "123qweASD", "ssh-test");
+        user = userGenerator.random();
     }
 
     @After

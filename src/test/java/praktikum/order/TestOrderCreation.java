@@ -5,9 +5,12 @@ import org.junit.After;
 import org.junit.Test;
 import praktikum.user.User;
 import praktikum.user.UserClient;
+import praktikum.user.UserGenerator;
+
 import static org.hamcrest.Matchers.equalTo;
 
 public class TestOrderCreation {
+    private final UserGenerator userGenerator = new UserGenerator();
     private final OrderGenerator generator = new OrderGenerator();
     private final OrderClient orderClient = new OrderClient();
     private final UserClient userClient = new UserClient();
@@ -31,7 +34,7 @@ public class TestOrderCreation {
     @DisplayName("Успешное создание заказа с авторизацией, с ингридиентами, status code and body.")
     public void createAutorizedOrder() {
         Order order = generator.simple();
-        User user = new User("ssh-authOrder@yandex.ru", "123qweASD", "ssh-authOrder");
+        User user = userGenerator.random();
         userAccessToken = userClient.create(user).extract().body().path("accessToken");
         orderClient.createAuthorized(order, userAccessToken).assertThat().statusCode(200).and().body("success",equalTo(true));
     }
@@ -47,7 +50,7 @@ public class TestOrderCreation {
     @DisplayName("Создание заказа без ингридиентов, с авторизацией.")
     public void createAutorizedOrderNoIngredients() {
         Order order = generator.noIngredients();
-        User user = new User("ssh-authOrder@yandex.ru", "123qweASD", "ssh-authOrder");
+        User user = userGenerator.random();
         userAccessToken = userClient.create(user).extract().body().path("accessToken");
         orderClient.createAuthorized(order, userAccessToken).assertThat().statusCode(400).and().body("success",equalTo(false)).body("message", equalTo("Ingredient ids must be provided"));
     }

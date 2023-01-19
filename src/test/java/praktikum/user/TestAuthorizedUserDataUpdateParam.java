@@ -1,6 +1,7 @@
 package praktikum.user;
 
 import io.qameta.allure.Description;
+import io.qameta.allure.junit4.DisplayName;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,23 +18,24 @@ public class TestAuthorizedUserDataUpdateParam {
     private final UserPropertiesState password;
     private final UserPropertiesState name;
     private final int expectedStatusCode;
-    private final boolean expectedSucсessState;
+    private final boolean expectedSuccessState;
 
     private User user;
+    private final UserGenerator userGenerator = new UserGenerator();
     private final UserClient userClient = new UserClient();
     private String userAccessToken;
 
-    public TestAuthorizedUserDataUpdateParam(UserPropertiesState email, UserPropertiesState password, UserPropertiesState name, int expectedStatusCode, boolean expectedSucсessState) {
+    public TestAuthorizedUserDataUpdateParam(UserPropertiesState email, UserPropertiesState password, UserPropertiesState name, int expectedStatusCode, boolean expectedSuccessState) {
         this.email = email;
         this.password = password;
         this.name = name;
         this.expectedStatusCode = expectedStatusCode;
-        this.expectedSucсessState = expectedSucсessState;
+        this.expectedSuccessState = expectedSuccessState;
     }
 
     @Before
     public void setUp() {
-        user = new User("ssh_update@yandex.ru", "123qweASD", "ssh_update");
+        user = userGenerator.random();
     }
 
     @After
@@ -91,6 +93,6 @@ public class TestAuthorizedUserDataUpdateParam {
         }
 
         System.out.println("Отправляем запрос на изменение свойств пользователя со значениями: " + user);
-        userClient.updateData(user, userAccessToken).assertThat().statusCode(expectedStatusCode).and().body("success", equalTo(expectedSucсessState));
+        userClient.updateData(user, userAccessToken).assertThat().statusCode(expectedStatusCode).and().body("success", equalTo(expectedSuccessState));
     }
 }

@@ -5,10 +5,13 @@ import org.junit.After;
 import org.junit.Test;
 import praktikum.user.User;
 import praktikum.user.UserClient;
+import praktikum.user.UserGenerator;
+
 import static org.hamcrest.Matchers.equalTo;
 
 public class TestUserOrders {
 
+    private final UserGenerator userGenerator = new UserGenerator();
     private final OrderGenerator generator = new OrderGenerator();
     private final OrderClient orderClient = new OrderClient();
     private final UserClient userClient = new UserClient();
@@ -25,7 +28,7 @@ public class TestUserOrders {
     @DisplayName("Получение заказа авторизованного пользователя.")
     public void getOrdersAuthorizedUser() {
         Order order = generator.simple();
-        User user = new User("ssh-getOrder@yandex.ru", "123qweASD", "ssh-getOrder");
+        User user = userGenerator.random();
         userAccessToken = userClient.create(user).extract().body().path("accessToken");
         //Получаю order_id созданного заказа, чтобы после сравнить, что именно он вернется в запросе заказов пользователя.
         String createdOrderId = orderClient.createAuthorized(order, userAccessToken).extract().body().path("order._id");

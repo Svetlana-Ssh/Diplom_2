@@ -17,25 +17,26 @@ public class TestUnauthorizedUserDataUpdateParam {
     private final UserPropertiesState password;
     private final UserPropertiesState name;
     private final int expectedStatusCode;
-    private final boolean expectedSucсessState;
+    private final boolean expectedSuccessState;
     private final String expectedMessage;
 
     private User user;
+    private final UserGenerator userGenerator = new UserGenerator();
     private final UserClient userClient = new UserClient();
     private String userAccessToken;
 
-    public TestUnauthorizedUserDataUpdateParam(UserPropertiesState email, UserPropertiesState password, UserPropertiesState name, int expectedStatusCode, boolean expectedSucсessState, String expectedMessage) {
+    public TestUnauthorizedUserDataUpdateParam(UserPropertiesState email, UserPropertiesState password, UserPropertiesState name, int expectedStatusCode, boolean expectedSuccessState, String expectedMessage) {
         this.email = email;
         this.password = password;
         this.name = name;
         this.expectedStatusCode = expectedStatusCode;
-        this.expectedSucсessState = expectedSucсessState;
+        this.expectedSuccessState = expectedSuccessState;
         this.expectedMessage = expectedMessage;
     }
 
     @Before
     public void setUp() {
-        user = new User("ssh_BadUpdate@yandex.ru", "123qweASD", "ssh_BadUpdate");
+        user = userGenerator.random();
     }
 
     @After
@@ -93,6 +94,6 @@ public class TestUnauthorizedUserDataUpdateParam {
         }
 
         System.out.println("Отправляем запрос без авторизации на изменение свойств пользователя со значениями: " + user);
-        userClient.updateDataUnauthorized(user).assertThat().statusCode(expectedStatusCode).and().body("success", equalTo(expectedSucсessState));
+        userClient.updateDataUnauthorized(user).assertThat().statusCode(expectedStatusCode).and().body("success", equalTo(expectedSuccessState)).and().body("message", equalTo(expectedMessage));
     }
 }
